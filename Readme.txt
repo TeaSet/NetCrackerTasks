@@ -1,1 +1,1 @@
-This repository is for NetCracker tasks.
+This repository is for NetCracker tasks. These tasks connects with Java.
