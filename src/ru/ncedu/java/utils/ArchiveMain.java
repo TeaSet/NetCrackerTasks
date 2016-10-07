@@ -10,6 +10,7 @@ public class ArchiveMain {
         Archiver archiver = new ZipArchive();
         try {
             archiver.createZipArchiveWithFiles(args[0], args[1]);
+            archiver.recoverZipArchiveWithFiles(args[0], args[2]);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {

@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -26,13 +29,44 @@ public class ZipArchive implements Archiver {
         zos.close();
     }
 
+    @Override
+    public void recoverZipArchiveWithFiles(String zipArchiveName, String path) throws IOException {
+        ZipInputStream zis = new ZipInputStream(new FileInputStream(zipArchiveName));
+        FileOutputStream fos = null;
+        ZipEntry ze = null;
+
+        if (!Files.exists(Paths.get(path)))
+            new File(path).mkdirs();
+
+        while((ze = zis.getNextEntry()) != null) {
+            String outFileName = ze.getName();
+            if (ze.isDirectory())
+                new File(path, outFileName).mkdirs();
+            else
+                fos = new FileOutputStream(new File(path, outFileName));
+
+            writeFromZisToFos(zis, fos);
+            zis.close();
+        }
+    }
+
     protected void writeFromFisToZos(FileInputStream fis, ZipOutputStream zos) throws IOException {
         byte[] buf = new byte[1024];
         int length;
         while(true) {
             length = fis.read(buf);
-            if (length < 0)
-                zos.write(buf, 0, length);
+            if (length < 0) break;
+            zos.write(buf, 0, length);
+        }
+    }
+
+    protected void writeFromZisToFos(ZipInputStream zis, FileOutputStream fos) throws IOException {
+        byte[] buf = new byte[1024];
+        int length;
+        while (true) {
+            length = zis.read(buf);
+            if (length < 0) break;
+            fos.write(buf, 0, length);
         }
     }
 }

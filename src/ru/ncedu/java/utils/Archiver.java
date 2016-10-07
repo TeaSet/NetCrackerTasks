@@ -7,4 +7,5 @@ import java.io.IOException;
  */
 public interface Archiver {
     public void createZipArchiveWithFiles(String zipArchiveName, String filename) throws IOException;
+    public void recoverZipArchiveWithFiles(String zipArchiveName, String path) throws IOException;
 }
